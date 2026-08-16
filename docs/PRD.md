@@ -51,7 +51,7 @@ Pipeline RAG (Retrieval-Augmented Generation) que ingere documentos PDF, armazen
 
 **Critérios de Aceite:**
 - [ ] O sistema lê o arquivo definido em `PDF_PATH` (variável de ambiente)
-- [ ] O PDF é dividido em chunks com sobreposição (overlap) configurável
+- [ ] O PDF é dividido em chunks de **1000 caracteres** com **overlap de 150** (valores obrigatórios pelo DESAFIO)
 - [ ] Cada chunk é convertido em vetor (embedding) pelo provedor configurado (Google ou OpenAI)
 - [ ] Os vetores são persistidos na coleção definida em `PG_VECTOR_COLLECTION_NAME`
 - [ ] O script exibe ao final o número de chunks ingeridos
@@ -61,8 +61,8 @@ Pipeline RAG (Retrieval-Augmented Generation) que ingere documentos PDF, armazen
 > *Como usuário, quero fazer uma pergunta em linguagem natural e receber uma resposta baseada no conteúdo do PDF.*
 
 **Critérios de Aceite:**
-- [ ] A pergunta é transformada em vetor e usada para recuperar os `k` chunks mais relevantes do pgvector
-- [ ] Os chunks recuperados são injetados no template de prompt definido em `PROMPT_TEMPLATE` (`search.py`)
+- [ ] A pergunta é transformada em vetor e usada para recuperar os **10 chunks mais relevantes** (`k=10`, via `similarity_search_with_score`) do pgvector
+- [ ] Os chunks recuperados são concatenados e injetados no template de prompt definido em `PROMPT_TEMPLATE` (`search.py`)
 - [ ] O LLM responde **somente** com base no `{contexto}` fornecido
 - [ ] Se a resposta não estiver no documento, o sistema retorna: `"Não tenho informações necessárias para responder sua pergunta."`
 - [ ] O sistema nunca produz opiniões, suposições ou informações externas ao documento
@@ -100,12 +100,22 @@ Pipeline RAG (Retrieval-Augmented Generation) que ingere documentos PDF, armazen
 | LLM | Gemini (ex.: `gemini-1.5-flash`) | GPT (ex.: `gpt-4o-mini`) |
 | Variável de ativação | `GOOGLE_API_KEY` | `OPENAI_API_KEY` |
 
+### Parâmetros Obrigatórios (fixados pelo DESAFIO)
+
+| Parâmetro | Valor | Local |
+|---|---|---|
+| `chunk_size` | `1000` caracteres | `src/ingest.py` |
+| `chunk_overlap` | `150` caracteres | `src/ingest.py` |
+| `k` (top-k retrieval) | `10` | `src/search.py` (`similarity_search_with_score`) |
+| Mensagem de recusa | `"Não tenho informações necessárias para responder sua pergunta."` | `src/search.py` |
+
 ### Template de Prompt RAG (já definido em `src/search.py`)
 
 O prompt segue o padrão **Context-Only** com exemplos negativos explícitos:
 
 ```
-CONTEXTO: {contexto}
+CONTEXTO:
+{contexto}
 
 REGRAS:
 - Responda somente com base no CONTEXTO.
@@ -113,6 +123,21 @@ REGRAS:
   "Não tenho informações necessárias para responder sua pergunta."
 - Nunca invente ou use conhecimento externo.
 - Nunca produza opiniões ou interpretações além do que está escrito.
+
+EXEMPLOS DE PERGUNTAS FORA DO CONTEXTO:
+Pergunta: "Qual é a capital da França?"
+Resposta: "Não tenho informações necessárias para responder sua pergunta."
+
+Pergunta: "Quantos clientes temos em 2024?"
+Resposta: "Não tenho informações necessárias para responder sua pergunta."
+
+Pergunta: "Você acha isso bom ou ruim?"
+Resposta: "Não tenho informações necessárias para responder sua pergunta."
+
+PERGUNTA DO USUÁRIO:
+{pergunta}
+
+RESPONDA A "PERGUNTA DO USUÁRIO"
 ```
 
 ### Estratégia de Avaliação de Qualidade
