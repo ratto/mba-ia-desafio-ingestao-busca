@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "prd": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "skillPath": "skills/prd/SKILL.md",
+      "computedHash": "1f3e1f005fc40fda85d250ae906c8ee4f7e8e833e23adfeca6542c19609fd7cd"
+    },
+    "write-spec": {
+      "source": "anthropics/knowledge-work-plugins",
+      "sourceType": "github",
+      "skillPath": "product-management/skills/write-spec/SKILL.md",
+      "computedHash": "6ec065dfac46311b9550499997630c62b9748598e3128056ddf58a789162517e"
+    }
+  }
+}
