@@ -77,6 +77,12 @@ Docker Compose runs two services:
 - `postgres_rag`: PostgreSQL 17 on port 5432 with persistent volume
 - `bootstrap_vector_ext`: One-shot service that installs the `pgvector` extension on first run
 
+## Git Guardrails
+
+- **NEVER** target `upstream` in any git or `gh` command (push, PR, fetch, etc.)
+- All git operations MUST use `origin` (`git@github.com:ratto/mba-ia-desafio-ingestao-busca.git`)
+- When creating PRs with `gh pr create`, always pass `--repo ratto/mba-ia-desafio-ingestao-busca` to ensure the fork is targeted, not the upstream org repo
+
 ## Required Project Structure (per DESAFIO)
 
 ```
