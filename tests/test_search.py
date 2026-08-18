@@ -237,7 +237,7 @@ class TestBuildLlm:
         assert result is fake_llm
 
     def test_uses_google_default_llm_model(self, monkeypatch):
-        """Deve usar 'gemini-1.5-flash' como default quando GOOGLE_LLM_MODEL não estiver definido."""
+        """Deve usar 'gemini-3.0-flash' como default quando GOOGLE_LLM_MODEL não estiver definido."""
         monkeypatch.setenv("GOOGLE_API_KEY", "fake-key")
 
         fake_google_class = MagicMock(return_value=MagicMock())
@@ -249,10 +249,10 @@ class TestBuildLlm:
         }):
             search_mod._build_llm()
 
-        fake_google_class.assert_called_once_with(model="gemini-1.5-flash")
+        fake_google_class.assert_called_once_with(model="gemini-3.0-flash")
 
     def test_uses_openai_default_llm_model(self, monkeypatch):
-        """Deve usar 'gpt-4o-mini' como default quando OPENAI_LLM_MODEL não estiver definido."""
+        """Deve usar 'gpt-5.6-luna' como default quando OPENAI_LLM_MODEL não estiver definido."""
         monkeypatch.setenv("OPENAI_API_KEY", "fake-key")
 
         fake_openai_class = MagicMock(return_value=MagicMock())
@@ -262,7 +262,7 @@ class TestBuildLlm:
         }):
             search_mod._build_llm()
 
-        fake_openai_class.assert_called_once_with(model="gpt-4o-mini")
+        fake_openai_class.assert_called_once_with(model="gpt-5.6-luna")
 
     def test_returns_none_when_no_api_key(self, capsys):
         """Deve retornar None quando nenhuma chave de API estiver configurada."""

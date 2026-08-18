@@ -110,7 +110,7 @@ def _build_llm():
     para OpenAI caso contrário.
 
     Modelos padrão configuráveis via variáveis de ambiente:
-    - ``GOOGLE_LLM_MODEL``  (default: ``gemini-1.5-flash``)
+    - ``GOOGLE_LLM_MODEL``  (default: ``gemini-3.6-flash``)
     - ``OPENAI_LLM_MODEL``  (default: ``gpt-4o-mini``)
 
     Modelos leves foram escolhidos como default para minimizar latência e custo,
@@ -126,13 +126,13 @@ def _build_llm():
     if os.getenv("GOOGLE_API_KEY"):
         from langchain_google_genai import ChatGoogleGenerativeAI
 
-        model = os.getenv("GOOGLE_LLM_MODEL", "gemini-1.5-flash")
+        model = os.getenv("GOOGLE_LLM_MODEL", "gemini-3.0-flash")
         return ChatGoogleGenerativeAI(model=model)
 
     if os.getenv("OPENAI_API_KEY"):
         from langchain_openai import ChatOpenAI
 
-        model = os.getenv("OPENAI_LLM_MODEL", "gpt-4o-mini")
+        model = os.getenv("OPENAI_LLM_MODEL", "gpt-5.6-luna")
         return ChatOpenAI(model=model)
 
     print(
